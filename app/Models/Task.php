@@ -34,4 +34,9 @@ class Task extends Model
             $task->slug = $slug;
         });
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateTaskRequest extends FormRequest
 {
@@ -23,7 +24,7 @@ class UpdateTaskRequest extends FormRequest
     {
         return [
             //
-            'title' => ['required', 'string', 'max:255'],
+            'title' => ['required', 'string', 'max:255',Rule::unique('tasks')->ignore($this->task)->where(fn ($query) => $query->where('user_id', $this->user()->id))],
             'description' => ['nullable', 'string'],
             'completed' => ['sometimes', 'boolean'],
         ];

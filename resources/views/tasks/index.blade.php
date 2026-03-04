@@ -9,7 +9,11 @@
 
 <h1>Lista de tareas</h1>
 
+<br>
+
 <a href="/tasks/create">Nueva tarea</a>
+
+<br><br>
 
 <form method="GET" action="{{ route('tasks.index') }}">
     <input type="text" name="search" placeholder="Buscar tarea..." value="{{ request('search') }}">
@@ -20,6 +24,8 @@
     </select>
     <button type="submit">Buscar</button>
 </form>
+
+<br>
 
 @foreach($tasks as $task)
     <p>

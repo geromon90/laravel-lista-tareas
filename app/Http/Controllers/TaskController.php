@@ -13,21 +13,23 @@ class TaskController extends Controller
     //
     public function index(Request $request)
     {
-        $query = Task::query();
+        //$query = Task::query();
+        $query = auth()->user()->tasks()->latest();
         
         if($request->filled('search')) {
             $query->where('title', 'like', '%' . $request->search . '%');
         }
 
         if($request->filled('status')) {
-            if ($request->status === 'completed') {
+            /*if ($request->status === 'completed') {
                 $query->where('completed', true);
             } elseif ($request->status === 'pending') {
                 $query->where('completed', false);
-            }
+            }*/
+            $query->where('completed', $request->status === 'completed');
         }
         $query->orderBy('created_at', 'desc');
-        $tasks = $query->paginate(5);
+        $tasks = $query->paginate(5)->withQueryString();
         return view('tasks.index', compact('tasks'));
     }
 
@@ -39,25 +41,29 @@ class TaskController extends Controller
     //
     public function store(StoreTaskRequest $request)
     {
-        $task = Task::create($request->validated());
+        //$task = Task::create($request->validated());
+        auth()->user()->tasks()->create( $request->validated() );
         return redirect()->route('tasks.index')->with('success', 'Tarea creada correctamente');
     }
 
     //
     public function edit(Task $task)
     {
+        $this->authorize('update', $task);
         return view('tasks.edit', compact('task'));
     }
 
     //
     public function update(UpdateTaskRequest $request, Task $task)
     {
+        $this->authorize('update', $task);
         $task->update($request->validated());
         return redirect()->route('tasks.index')->with('success', 'Tarea actualizada');
     }
 
     public function destroy(Task $task)
     {
+        $this->authorize('update', $task);
         $task->delete();
         return redirect()->route('tasks.index')->with('success', 'Tarea eliminada');
     }
